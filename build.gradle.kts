@@ -23,6 +23,7 @@ dependencies {
 	val mapstructVersion = "1.5.5.Final"
 	val postgresqlVersion = "42.7.7"
 	val flywayCoreVersion = "9.16.3"
+	val openapiVersion = "2.3.0"
 
 	implementation("org.springframework.boot:spring-boot-starter")
 	implementation("org.springframework.boot:spring-boot-starter-web")
@@ -31,6 +32,9 @@ dependencies {
 	implementation("org.mapstruct:mapstruct:${mapstructVersion}")
 	implementation("org.projectlombok:lombok:${lombokVersion}")
 	implementation("org.flywaydb:flyway-core:${flywayCoreVersion}")
+
+	// Source: https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${openapiVersion}")
 
 	runtimeOnly("org.postgresql:postgresql:${postgresqlVersion}")
 
