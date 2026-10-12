@@ -1,4 +1,4 @@
-package com.hcLinear.backendTest.controller;
+package com.hcLinear.backendTest.controllers;
 
 import java.util.Map;
 
