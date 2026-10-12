@@ -1,6 +1,13 @@
 spring:
   application:
     name: backend_test
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+  jpa:
+    hibernate.ddl-auto: validate
+    open-in-view: false
 
 server:
   port: 8080
