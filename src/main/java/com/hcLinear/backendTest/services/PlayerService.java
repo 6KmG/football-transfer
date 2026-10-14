@@ -9,6 +9,7 @@ import com.hcLinear.backendTest.models.PlayerModel;
 import com.hcLinear.backendTest.models.TeamModel;
 import com.hcLinear.backendTest.repositories.PlayerRepository;
 import com.hcLinear.backendTest.repositories.TeamRepository;
+import com.hcLinear.backendTest.repositories.TransferRequestRepository;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -26,6 +27,7 @@ public class PlayerService {
 
     private final PlayerRepository playerRepository;
     private final TeamRepository teamRepository;
+    private final TransferRequestRepository transferRequestRepository;
     private final PlayerMapper playerMapper;
 
     @Transactional
@@ -65,6 +67,10 @@ public class PlayerService {
     public void delete(Long id) {
         PlayerModel player = playerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Játékos nem található: " + id));
+
+        // A játékoshoz tartozó átigazolási kérelmek takarítása (FK CASCADE is törölné,
+        // de JPA szinten explicit törlünk a konzisztens állapothoz).
+        transferRequestRepository.deleteByPlayerId(id);
 
         // Ha a játékos valamely csapat kapitánya, a referenciát nullázni kell (FK SET NULL).
         List<TeamModel> captainedTeams = teamRepository.findByCaptainId(id);

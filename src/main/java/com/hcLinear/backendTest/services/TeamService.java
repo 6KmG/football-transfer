@@ -10,6 +10,7 @@ import com.hcLinear.backendTest.models.PlayerModel;
 import com.hcLinear.backendTest.models.TeamModel;
 import com.hcLinear.backendTest.repositories.PlayerRepository;
 import com.hcLinear.backendTest.repositories.TeamRepository;
+import com.hcLinear.backendTest.repositories.TransferRequestRepository;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
     private final PlayerRepository playerRepository;
+    private final TransferRequestRepository transferRequestRepository;
     private final TeamMapper teamMapper;
 
     @Transactional
@@ -66,6 +68,10 @@ public class TeamService {
     public void delete(Long id) {
         TeamModel team = teamRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Csapat nem található: " + id));
+
+        // Átigazolási kérelmek takarítása: a törölt csapathoz kötődő előzmények
+        // nem maradhatnak árván (target kötelező, source opcionális).
+        transferRequestRepository.deleteBySourceTeamIdOrTargetTeamId(id, id);
 
         // Játékosok nem törlődnek a csapattal: team_id SET NULL (FK is ezt teszi,
         // de JPA szinten is le kell választani a konzisztens állapothoz).
