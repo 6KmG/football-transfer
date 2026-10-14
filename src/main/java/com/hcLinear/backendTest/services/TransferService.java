@@ -8,6 +8,7 @@ import com.hcLinear.backendTest.exceptions.ResourceNotFoundException;
 import com.hcLinear.backendTest.mappers.TransferMapper;
 import com.hcLinear.backendTest.models.PlayerModel;
 import com.hcLinear.backendTest.models.TeamModel;
+import com.hcLinear.backendTest.models.TransferDocumentModel;
 import com.hcLinear.backendTest.models.TransferRequestModel;
 import com.hcLinear.backendTest.repositories.PlayerRepository;
 import com.hcLinear.backendTest.repositories.TeamRepository;
@@ -29,6 +30,7 @@ public class TransferService {
     private final PlayerRepository playerRepository;
     private final TeamRepository teamRepository;
     private final TransferMapper transferMapper;
+    private final TransferDocumentService transferDocumentService;
 
     @Transactional
     public TransferResponse create(TransferCreateRequest request) {
@@ -133,6 +135,7 @@ public class TransferService {
         targetTeam.setBudget(targetTeam.getBudget().subtract(fee));
         teamRepository.save(targetTeam);
 
+        TeamModel effectiveSourceTeam = sourceTeam;
         if (sourceTeam != null) {
             TeamModel freshSource = teamRepository.findById(sourceTeam.getId())
                     .orElse(null);
@@ -145,6 +148,7 @@ public class TransferService {
                     freshSource.setCaptain(null);
                 }
                 teamRepository.save(freshSource);
+                effectiveSourceTeam = freshSource;
             }
         }
 
@@ -152,7 +156,20 @@ public class TransferService {
         playerRepository.save(player);
 
         transfer.setStatus(TransferStatus.ACCEPTED);
-        transferRepository.save(transfer);
+        TransferRequestModel acceptedTransfer = transferRepository.save(transfer);
+
+        // 6. feladat: sikeres átigazolás esetén automatikus érvényesítő dokumentum.
+        // Ugyanazon tranzakció része: ha a dokumentum létrehozása sikertelen,
+        // az egész átigazolás visszavonásra kerül. A dokumentum sorszámát
+        // adatbázis-szekvencia adja (egyedi, növekvő), formátuma pl. ATIG000014HU.
+        // Idempotens: ismételt hívás esetén a meglévő dokumentumot adja vissza.
+        TransferDocumentModel document = transferDocumentService.createEntityForAcceptedTransfer(
+                acceptedTransfer,
+                player,
+                effectiveSourceTeam,
+                targetTeam,
+                fee,
+                LocalDate.now());
 
         List<TransferRequestModel> others =
                 transferRepository.findByPlayerIdAndStatus(playerId, TransferStatus.PENDING);
@@ -163,7 +180,7 @@ public class TransferService {
         }
         transferRepository.saveAll(others);
 
-        return transferMapper.toResponse(transfer);
+        return transferMapper.toResponse(acceptedTransfer);
     }
 
     @Transactional

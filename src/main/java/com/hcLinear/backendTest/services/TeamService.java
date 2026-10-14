@@ -10,6 +10,7 @@ import com.hcLinear.backendTest.models.PlayerModel;
 import com.hcLinear.backendTest.models.TeamModel;
 import com.hcLinear.backendTest.repositories.PlayerRepository;
 import com.hcLinear.backendTest.repositories.TeamRepository;
+import com.hcLinear.backendTest.repositories.TransferDocumentRepository;
 import com.hcLinear.backendTest.repositories.TransferRequestRepository;
 import java.time.LocalDate;
 import java.util.List;
@@ -26,6 +27,7 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final PlayerRepository playerRepository;
     private final TransferRequestRepository transferRequestRepository;
+    private final TransferDocumentRepository transferDocumentRepository;
     private final TeamMapper teamMapper;
 
     @Transactional
@@ -71,6 +73,8 @@ public class TeamService {
 
         // Átigazolási kérelmek takarítása: a törölt csapathoz kötődő előzmények
         // nem maradhatnak árván (target kötelező, source opcionális).
+        // Dokumentumok előbb (a kérelmek törlése DB-szinten is kaszkádolna rájuk).
+        transferDocumentRepository.deleteBySourceTeamIdOrTargetTeamId(id, id);
         transferRequestRepository.deleteBySourceTeamIdOrTargetTeamId(id, id);
 
         // Játékosok nem törlődnek a csapattal: team_id SET NULL (FK is ezt teszi,

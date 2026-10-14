@@ -9,6 +9,7 @@ import com.hcLinear.backendTest.models.PlayerModel;
 import com.hcLinear.backendTest.models.TeamModel;
 import com.hcLinear.backendTest.repositories.PlayerRepository;
 import com.hcLinear.backendTest.repositories.TeamRepository;
+import com.hcLinear.backendTest.repositories.TransferDocumentRepository;
 import com.hcLinear.backendTest.repositories.TransferRequestRepository;
 import java.time.LocalDate;
 import java.time.Period;
@@ -28,6 +29,7 @@ public class PlayerService {
     private final PlayerRepository playerRepository;
     private final TeamRepository teamRepository;
     private final TransferRequestRepository transferRequestRepository;
+    private final TransferDocumentRepository transferDocumentRepository;
     private final PlayerMapper playerMapper;
 
     @Transactional
@@ -70,6 +72,10 @@ public class PlayerService {
 
         // A játékoshoz tartozó átigazolási kérelmek takarítása (FK CASCADE is törölné,
         // de JPA szinten explicit törlünk a konzisztens állapothoz).
+        // Dokumentumok előbb: a kérelmek törlése DB-szinten is kaszkádolna rájuk
+        // (transfer_request_id ON DELETE CASCADE), de explicit törléssel nem
+        // függünk a kaszkád sorrendjétől.
+        transferDocumentRepository.deleteByPlayerId(id);
         transferRequestRepository.deleteByPlayerId(id);
 
         // Ha a játékos valamely csapat kapitánya, a referenciát nullázni kell (FK SET NULL).
