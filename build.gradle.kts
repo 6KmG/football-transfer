@@ -44,6 +44,7 @@ dependencies {
 
 	annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
 	annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+	annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
 }
 
 tasks.withType<Test> {

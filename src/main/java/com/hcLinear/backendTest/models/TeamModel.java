@@ -1,11 +1,13 @@
 package com.hcLinear.backendTest.models;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
@@ -53,9 +55,15 @@ public class TeamModel {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal budget;
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "team", orphanRemoval = false)
     @Builder.Default
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<PlayerModel> players = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "captain_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private PlayerModel captain;
 }
