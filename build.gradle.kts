@@ -24,6 +24,8 @@ dependencies {
 	val postgresqlVersion = "42.7.7"
 	val flywayCoreVersion = "9.16.3"
 	val openapiVersion = "2.3.0"
+	val openpdfVersion = "1.3.30"
+	val lombokMapstructVersion = "0.2.0"
 
 	implementation("org.springframework.boot:spring-boot-starter")
 	implementation("org.springframework.boot:spring-boot-starter-web")
@@ -35,6 +37,7 @@ dependencies {
 
 	// Source: https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${openapiVersion}")
+	implementation("com.github.librepdf:openpdf:${openpdfVersion}")
 
 	runtimeOnly("org.postgresql:postgresql:${postgresqlVersion}")
 
@@ -44,7 +47,7 @@ dependencies {
 
 	annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
 	annotationProcessor("org.projectlombok:lombok:$lombokVersion")
-	annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
+	annotationProcessor("org.projectlombok:lombok-mapstruct-binding:$lombokMapstructVersion")
 }
 
 tasks.withType<Test> {
