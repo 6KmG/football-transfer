@@ -24,12 +24,6 @@ public class TransferDocumentService {
     private final TransferDocumentMapper documentMapper;
     private final TransferDocumentNumberGenerator numberGenerator;
 
-    /**
-     * Dokumentum létrehozása egy elfogadott átigazoláshoz.
-     *
-     * <p>Idempotens: ha a kérelemhez már létezik dokumentum (pl. ismételt hívás),
-     * a meglévőt adja vissza új sorszám felhasználása nélkül.</p>
-     */
     @Transactional
     public TransferDocumentResponse createForAcceptedTransfer(TransferRequestModel transfer,
                                                              PlayerModel player,
@@ -41,9 +35,6 @@ public class TransferDocumentService {
                 createEntityForAcceptedTransfer(transfer, player, sourceTeam, targetTeam, fee, transferDate));
     }
 
-    /**
-     * Entitás szintű létrehozás (a {@code TransferService} tranzakciójába becsatlakozva).
-     */
     @Transactional
     public TransferDocumentModel createEntityForAcceptedTransfer(TransferRequestModel transfer,
                                                                 PlayerModel player,

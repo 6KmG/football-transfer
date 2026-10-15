@@ -71,14 +71,9 @@ public class TeamService {
         TeamModel team = teamRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Csapat nem található: " + id));
 
-        // Átigazolási kérelmek takarítása: a törölt csapathoz kötődő előzmények
-        // nem maradhatnak árván (target kötelező, source opcionális).
-        // Dokumentumok előbb (a kérelmek törlése DB-szinten is kaszkádolna rájuk).
         transferDocumentRepository.deleteBySourceTeamIdOrTargetTeamId(id, id);
         transferRequestRepository.deleteBySourceTeamIdOrTargetTeamId(id, id);
 
-        // Játékosok nem törlődnek a csapattal: team_id SET NULL (FK is ezt teszi,
-        // de JPA szinten is le kell választani a konzisztens állapothoz).
         List<PlayerModel> players = playerRepository.findByTeamId(id);
         for (PlayerModel player : players) {
             player.setTeam(null);

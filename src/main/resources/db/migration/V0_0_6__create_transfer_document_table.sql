@@ -1,7 +1,3 @@
--- 6. feladat: atigazolast ervenyesito dokumentum tabla + futo sorszam szekvencia
--- Dokumentum azonosito formatum: prefix + fix hosszusagu, nullakkal feltoltott futo sorszam + suffix
--- pelda: ATIG000014HU (prefix=ATIG, sorszam 6 jegyu, suffix=HU)
-
 CREATE SEQUENCE transfer_document_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE transfer_documents (

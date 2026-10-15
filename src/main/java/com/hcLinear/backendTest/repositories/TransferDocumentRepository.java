@@ -12,11 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TransferDocumentRepository extends JpaRepository<TransferDocumentModel, Long> {
 
-    /**
-     * Következő futó sorszám lehívása a {@code transfer_document_seq} szekvenciából.
-     * A szekvencia adatbázis-szinten garantálja az egyediséget és a növekvő sorrendet,
-     * konkurrens átigazolások esetén is.
-     */
     @Query(value = "SELECT nextval('transfer_document_seq')", nativeQuery = true)
     Long nextSequenceValue();
 

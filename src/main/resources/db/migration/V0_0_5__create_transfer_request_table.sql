@@ -1,4 +1,3 @@
--- 5. feladat: atigazolasi kerelem tabla
 CREATE TABLE transfer_requests (
     id BIGSERIAL PRIMARY KEY,
     player_id BIGINT NOT NULL,

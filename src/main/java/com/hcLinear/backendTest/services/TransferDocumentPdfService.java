@@ -44,7 +44,6 @@ public class TransferDocumentPdfService {
 
     public byte[] generatePdf(TransferDocumentModel document) {
         try {
-            // CP1250 kódolás a magyar ékezetes karakterek (ő, ű, Á, Í stb.) helyes megjelenítéséhez.
             BaseFont baseFont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
             Font titleFont = new Font(baseFont, 18, Font.BOLD);
             Font sectionFont = new Font(baseFont, 12, Font.BOLD);
@@ -87,16 +86,10 @@ public class TransferDocumentPdfService {
             pdf.add(new Paragraph(" ", normalFont));
 
             pdf.add(new Paragraph("Átigazolási összeg:", sectionFont));
-            // A dokumentumban tárolt fee az átigazolási összeg; emellett a játékos
-            // pillanatnyi marketValue értékét is feltüntetjük, hogy a
-            // "Átigazolási összeg (a játékos marketValue értéke)" kitétel
-            // mindkét értelmezésben ellenőrizhető legyen.
             String feeText = formatFee(document.getFee());
             pdf.add(new Paragraph(feeText, normalFont));
             if (document.getPlayer() != null && document.getPlayer().getMarketValue() != null) {
                 String marketValueText = formatFee(document.getPlayer().getMarketValue());
-                // Ha a fee és a marketValue eltér, a marketValue-t is kiírjuk külön sorba,
-                // ha megegyezik, nem duplikálunk.
                 if (document.getFee() == null
                         || document.getFee().compareTo(document.getPlayer().getMarketValue()) != 0) {
                     pdf.add(new Paragraph("Játékos piaci értéke (marketValue): " + marketValueText, normalFont));
@@ -133,11 +126,6 @@ public class TransferDocumentPdfService {
         return value != null ? value : "-";
     }
 
-    /**
-     * Példa szerinti formátum: "25 000 000". Emellett zárójelben a szóköz nélküli
-     * plain alakot is feltüntetjük ("25000000"), hogy a gépi ellenőrzés
-     * szóközzel és anélkül is megtalálja az összeget.
-     */
     private String formatFee(BigDecimal fee) {
         if (fee == null) {
             return "-";

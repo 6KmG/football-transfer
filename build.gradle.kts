@@ -35,7 +35,6 @@ dependencies {
 	implementation("org.projectlombok:lombok:${lombokVersion}")
 	implementation("org.flywaydb:flyway-core:${flywayCoreVersion}")
 
-	// Source: https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${openapiVersion}")
 	implementation("com.github.librepdf:openpdf:${openpdfVersion}")
 

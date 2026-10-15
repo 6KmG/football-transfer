@@ -158,11 +158,6 @@ public class TransferService {
         transfer.setStatus(TransferStatus.ACCEPTED);
         TransferRequestModel acceptedTransfer = transferRepository.save(transfer);
 
-        // 6. feladat: sikeres átigazolás esetén automatikus érvényesítő dokumentum.
-        // Ugyanazon tranzakció része: ha a dokumentum létrehozása sikertelen,
-        // az egész átigazolás visszavonásra kerül. A dokumentum sorszámát
-        // adatbázis-szekvencia adja (egyedi, növekvő), formátuma pl. ATIG000014HU.
-        // Idempotens: ismételt hívás esetén a meglévő dokumentumot adja vissza.
         TransferDocumentModel document = transferDocumentService.createEntityForAcceptedTransfer(
                 acceptedTransfer,
                 player,

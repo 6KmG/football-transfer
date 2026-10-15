@@ -70,15 +70,9 @@ public class PlayerService {
         PlayerModel player = playerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Játékos nem található: " + id));
 
-        // A játékoshoz tartozó átigazolási kérelmek takarítása (FK CASCADE is törölné,
-        // de JPA szinten explicit törlünk a konzisztens állapothoz).
-        // Dokumentumok előbb: a kérelmek törlése DB-szinten is kaszkádolna rájuk
-        // (transfer_request_id ON DELETE CASCADE), de explicit törléssel nem
-        // függünk a kaszkád sorrendjétől.
         transferDocumentRepository.deleteByPlayerId(id);
         transferRequestRepository.deleteByPlayerId(id);
 
-        // Ha a játékos valamely csapat kapitánya, a referenciát nullázni kell (FK SET NULL).
         List<TeamModel> captainedTeams = teamRepository.findByCaptainId(id);
         for (TeamModel team : captainedTeams) {
             team.setCaptain(null);
